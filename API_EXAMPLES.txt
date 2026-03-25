@@ -1,0 +1,301 @@
+📚 ПРИКЛАДИ API ДЛЯ КОПІЮВАННЯ
+
+═══════════════════════════════════════════════════════════════
+
+🌤️  OPENWEATHER API - ОТРИМАННЯ ПОГОДИ
+
+Напишіть боту:
+"Напиши функцію для отримання поточної погоди з OpenWeather API"
+
+Бот напише щось подібне:
+
+```python
+import requests
+
+def get_weather(city, api_key):
+    """
+    Отримує поточну погоду для міста
+    api_key отримати на: https://openweathermap.org/api
+    """
+    url = f"https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        'q': city,
+        'appid': api_key,
+        'units': 'metric'  # Цельсій
+    }
+    
+    response = requests.get(url, params=params)
+    data = response.json()
+    
+    if response.status_code == 200:
+        return {
+            'temperature': data['main']['temp'],
+            'description': data['weather'][0]['description'],
+            'humidity': data['main']['humidity'],
+            'wind_speed': data['wind']['speed']
+        }
+    else:
+        return {'error': data['message']}
+
+# Приклад використання:
+api_key = 'ваш_api_key'
+weather = get_weather('Київ', api_key)
+print(weather)
+```
+
+═══════════════════════════════════════════════════════════════
+
+💰 COINMARKETCAP API - КРИПТО ЦІНИ
+
+Напишіть боту:
+"Показ топ 10 крипто валют по ціні"
+
+Бот напише:
+
+```python
+import requests
+
+def get_top_crypto(limit=10, api_key=''):
+    """Отримує топ крипто-валют"""
+    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+    
+    headers = {
+        'X-CMC_PRO_API_KEY': api_key,
+    }
+    
+    params = {
+        'limit': limit,
+        'convert': 'USD'
+    }
+    
+    response = requests.get(url, headers=headers, params=params)
+    data = response.json()
+    
+    for crypto in data['data']:
+        print(f"{crypto['name']}: ${crypto['quote']['USD']['price']:.2f}")
+
+get_top_crypto()
+```
+
+API_KEY: https://pro.coinmarketcap.com/
+
+═══════════════════════════════════════════════════════════════
+
+🐙 GITHUB API - ПОШУК РЕПОЗИТОРІЇВ
+
+Напишіть боту:
+"Як пошукати популярні репозиторії на GitHub?"
+
+Бот напише:
+
+```python
+import requests
+
+def search_github_repos(language='python', stars='>=1000', limit=10):
+    """Пошук репозиторіїв на GitHub"""
+    url = 'https://api.github.com/search/repositories'
+    
+    params = {
+        'q': f'language:{language} stars:{stars}',
+        'sort': 'stars',
+        'order': 'desc',
+        'per_page': limit
+    }
+    
+    response = requests.get(url, params=params)
+    repos = response.json()['items']
+    
+    for repo in repos:
+        print(f"⭐ {repo['name']}")
+        print(f"   {repo['description']}")
+        print(f"   Зірок: {repo['stargazers_count']}")
+        print()
+
+search_github_repos()
+```
+
+Без API_KEY для базового використання!
+
+═══════════════════════════════════════════════════════════════
+
+🎵 SPOTIFY API - ПОШУК МУЗИКИ
+
+Напишіть боту:
+"Як пошукати пісню через Spotify API?"
+
+Бот напише повний приклад з авторизацією.
+
+API: https://developer.spotify.com/
+
+═══════════════════════════════════════════════════════════════
+
+📸 PEXELS API - БЕЗПЛАТНІ ФОТО
+
+Напишіть боту:
+"Напиши функцію для завантаження фото з Pexels"
+
+Бот напише:
+
+```python
+import requests
+
+def get_photos(query, api_key, per_page=10):
+    """Отримує фото з Pexels"""
+    url = 'https://api.pexels.com/v1/search'
+    
+    headers = {'Authorization': api_key}
+    params = {
+        'query': query,
+        'per_page': per_page
+    }
+    
+    response = requests.get(url, headers=headers, params=params)
+    data = response.json()
+    
+    for photo in data['photos']:
+        print(f"Фото: {photo['photographer']}")
+        print(f"URL: {photo['src']['medium']}")
+
+get_photos('sunset', 'api_key')
+```
+
+API_KEY: https://www.pexels.com/api/
+
+═══════════════════════════════════════════════════════════════
+
+🌍 REST COUNTRIES API - ДАННІ ПРО КРАЇНИ
+
+Напишіть боту:
+"Напиши функцію для отримання даних про країну"
+
+Бот напише:
+
+```python
+import requests
+
+def get_country_info(country_name):
+    """Отримує інформацію про країну"""
+    url = f'https://restcountries.com/v3.1/name/{country_name}'
+    
+    response = requests.get(url)
+    data = response.json()[0]
+    
+    return {
+        'name': data['name']['common'],
+        'population': data['population'],
+        'capital': data['capital'][0] if data.get('capital') else 'N/A',
+        'region': data['region'],
+        'languages': data.get('languages', {}),
+        'flag': data['flag']
+    }
+
+info = get_country_info('Ukraine')
+for key, value in info.items():
+    print(f"{key}: {value}")
+```
+
+БЕЗПЛАТНО, без API KEY!
+
+═══════════════════════════════════════════════════════════════
+
+😂 JOKES API - АНЕКДОТИ
+
+Напишіть боту:
+"Отримай анекдот через API"
+
+Бот напише:
+
+```python
+import requests
+
+def get_joke():
+    """Отримує випадковий анекдот"""
+    url = 'https://v2.jokeapi.dev/joke/Any?format=json'
+    response = requests.get(url)
+    data = response.json()
+    
+    if data['type'] == 'twopart':
+        print(f"Setup: {data['setup']}")
+        print(f"Delivery: {data['delivery']}")
+    else:
+        print(data['joke'])
+
+get_joke()
+```
+
+БЕЗПЛАТНО, без API KEY!
+
+═══════════════════════════════════════════════════════════════
+
+👤 RANDOM USER API - ВИПАДКОВІ КОРИСТУВАЧІ
+
+Напишіть боту:
+"Генеруй випадкові профілі користувачів"
+
+```python
+import requests
+
+def get_random_users(count=5):
+    """Генерує випадкових користувачів"""
+    url = f'https://randomuser.me/api/?results={count}'
+    
+    response = requests.get(url)
+    users = response.json()['results']
+    
+    for user in users:
+        print(f"ім'я: {user['name']['first']} {user['name']['last']}")
+        print(f"Email: {user['email']}")
+        print(f"Фото: {user['picture']['large']}")
+        print()
+
+get_random_users()
+```
+
+БЕЗПЛАТНО, без API KEY!
+
+═══════════════════════════════════════════════════════════════
+
+🎨 JIKAN API - АНІМЕ БАЗИ ДАНИХ
+
+Напишіть боту:
+"Як пошукати аніме по назві через Jikan?"
+
+Бот напише повний код для роботи з аніме!
+
+═══════════════════════════════════════════════════════════════
+
+💡 ЯК КОРИСТУВАТИСЯ:
+
+1. Виберіть API який вам потрібен (/apis)
+2. Напишіть боту що саме вам потрібно
+3. Бот напише готовий код
+4. Скопіюйте його у ваш проект
+5. Додайте свій API_KEY якщо потрібен
+6. Запустіть!
+
+═══════════════════════════════════════════════════════════════
+
+🔑 ОТРИМАННЯ API KEYS:
+
+OpenWeather: https://openweathermap.org/api
+CoinMarketCap: https://pro.coinmarketcap.com/
+Spotify: https://developer.spotify.com/
+Pexels: https://www.pexels.com/api/
+Unsplash: https://unsplash.com/api
+Jikan: https://jikan.moe/ (безплатно)
+
+═══════════════════════════════════════════════════════════════
+
+🚀 ГОТОВІ ПРОЕКТИ ЯКІ ВИ МОЖЕТЕ ЗРОБИТИ:
+
+📊 Weather App - додаток погоди
+💹 Crypto Tracker - трекер крипто цін
+🎵 Music Player - програвач музики
+🎬 Movie Finder - пошуковик фільмів
+🗺️  Travel Planner - планер подорожей
+📸 Photo Gallery - галерея фото
+🎮 Random Game - випадкові ігри
+
+═══════════════════════════════════════════════════════════════
+
+Просто напишіть боту що вам потрібно і він напише код! 🤖✨
